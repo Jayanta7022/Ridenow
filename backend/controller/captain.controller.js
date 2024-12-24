@@ -14,12 +14,13 @@ const createCaptainschema = z.object({
         color: z.string().nonempty("vehical color is required"),
         plate: z.string().nonempty("vehical Number plate is required"),
         capacity: z.number().positive("Capacity must be a positive number"),
-        vehicleType: z.enum(['car', 'motorcycle', 'auto'], "Vehicle type is required")
+        vehicleType: z.enum(['car', 'moto', 'auto'], "Vehicle type is required")
     })
 });
 
 module.exports.register = async (req, res, next) => {
     try {
+        // console.log(req.body);     
         // Validate request body
         const validatedData = createCaptainschema.parse(req.body);
 

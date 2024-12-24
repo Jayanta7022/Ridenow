@@ -1,20 +1,34 @@
 import React, { useState } from 'react'
 import logo from '../assets/ridenow-logo.svg';
-import { Link } from 'react-router-dom';
-
+import { Link, useNavigate } from 'react-router-dom';
+import { UserDataContext } from '../context/UserContext';
+import axios from 'axios';
+    
 const UserLogin = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [userData, setuserData] = useState({})
 
-    const submitHandler = (e) => {
+
+    const navigate = useNavigate();
+    const { user, setUser } = React.useContext(UserDataContext);
+
+    const submitHandler = async (e) => {
         e.preventDefault();
-        setuserData({
+       const logindetails = {
             email,
             password
-        })
-        console.log(userData);
+       }
         
+        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/login`, logindetails)
+
+        if (response.status == 200) {
+            const data = response.data;
+            setUser(data.user);
+            localStorage.setItem('token', data.token);
+            console.log("login");
+            navigate("/home");
+        }
         setEmail('');
         setPassword('');
         

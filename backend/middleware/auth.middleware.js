@@ -8,15 +8,12 @@ module.exports.authUser = async (req, res, next) => {
     console.log("auth");
     
     try {
-
+        
         const token = req.cookies.token ||
             (req.headers.authorization && req.headers.authorization.split(' ')[1]);
-        console.log(token);
         
         if (!token) {
-            console.log("not token");
-            
-            console.log("token is not there");
+            console.log("not token");            
             throw new Error("unauthorize token");
         }
 
@@ -28,6 +25,8 @@ module.exports.authUser = async (req, res, next) => {
 
         const verifiedToken = jwt.verify(token, process.env.JWT_SECRET);
         const user = await userModel.findOne({ _id: verifiedToken._id });
+        console.log("auth done");
+        
         req.user = user;
         return next();
     } catch (error) {
@@ -43,7 +42,7 @@ module.exports.authCaptain = async (req, res, next) => {
 
         const token = req.cookies.token ||
             (req.headers.authorization && req.headers.authorization.split(' ')[1]);
-        console.log(token);
+        // console.log(token);
         
         if (!token) {
             console.log("not token");

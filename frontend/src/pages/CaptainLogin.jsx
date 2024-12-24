@@ -1,21 +1,31 @@
 import React, { useState } from 'react'
 import logo from '../assets/ridenow-logo.svg';
-import { Link } from 'react-router-dom';
-
+import { Link, useNavigate } from 'react-router-dom';
+import { CaptainDataContext } from '../context/CaptainContext';
+import axios from 'axios';
 
 const CaptainLogin = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [captainData, setcaptainData] = useState({})
+    const navigate = useNavigate();
+    const { captain, setCaptain } = React.useContext(CaptainDataContext);
 
-    const submitHandler = (e) => {
+    const submitHandler = async (e) => {
         e.preventDefault();
-        setcaptainData({
+        const captainData = {
             email,
             password
-        })
-        console.log(captainData);
+        };
+
+
+        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/login`, captainData)
+        if (response.status === 200) {
+            const data = response.data;
+            setCaptain(data.captain);
+            localStorage.setItem('captainToken', data.token);
+            navigate('/captain-home')
+        }
         
         setEmail('');
         setPassword('');
@@ -52,7 +62,7 @@ const CaptainLogin = () => {
                         placeholder='*******' />
                     <button
                         className='bg-[#111] text-white font-semibold mb-2 rounded px-4 py-2 border w-full text-lg placeholder:text-base'
-                    >login</button>
+                    >Login As a captain</button>
                     <p>Want to join a fleet ?<Link to='/captain-signup' className='text-blue-600'>Register as a Captain</Link>
                     </p>
                 </form>
